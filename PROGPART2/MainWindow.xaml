@@ -6,8 +6,10 @@
         xmlns:local="clr-namespace:CybersecurityChatbotGUI"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    
 	
     <Grid Margin="10">
+        
 		
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
@@ -22,6 +24,7 @@
 
 			<StackPanel>
 
+
 				<TextBlock Text="Cybersecurity Awareness Bot"
                            FontSize="28"
                            FontWeight="Bold"
@@ -34,6 +37,25 @@
 			</StackPanel>
 
 		</Border>
+        
+        <TextBlock
+    Text="
+  ██████╗██╗   ██╗██████╗ ███████╗██████╗ 
+ ██╔════╝╚██╗ ██╔╝██╔══██╗██╔════╝██╔══██╗
+ ██║      ╚████╔╝ ██████╔╝█████╗  ██████╔╝ 
+ ██║       ╚██╔╝  ██╔══██╗██╔══╝  ██╔══██╗
+ ╚██████╗   ██║   ██████╔╝███████╗██║  ██║
+  ╚═════╝   ╚═╝   ╚═════╝ ╚══════╝╚═╝  ╚═╝
+
+      CYBERSECURITY AWARENESS BOT
+"
+    FontFamily="Consolas"
+    FontSize="14"
+    Foreground="Lime"
+    Background="Black"
+    Margin="439,14,10,7"
+    TextWrapping="Wrap"/>
+        
 
 		<ListBox x:Name="ChatListBox"
                  Grid.Row="1"

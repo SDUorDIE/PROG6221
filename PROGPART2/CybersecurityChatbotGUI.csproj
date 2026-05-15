@@ -8,4 +8,14 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Audio\VoiceGreeting.mp4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Audio\VoiceGreeting.mp4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
