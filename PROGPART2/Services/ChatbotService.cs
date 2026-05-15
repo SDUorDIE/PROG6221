@@ -4,11 +4,14 @@ namespace CybersecurityChatbotGUI.Services
 {
     public class ChatbotService
     {
+        //tracks last matched topic
         private string currentTopic = "";
 
+        //composition
         private MemoryService memoryService = new MemoryService();
         private SentimentService sentimentService = new SentimentService();
 
+        //maps keyword
         private Dictionary<string, List<string>> responses =
             new Dictionary<string, List<string>>()
         {
@@ -47,6 +50,7 @@ namespace CybersecurityChatbotGUI.Services
         {
             input = input.ToLower();
 
+            //checks emotional tone
             string sentiment = sentimentService.DetectSentiment(input);
 
             if (sentiment == "worried")
@@ -60,12 +64,14 @@ namespace CybersecurityChatbotGUI.Services
 
                 return "Great! I will remember that you are interested in privacy.";
             }
-
+            
+            //follow up prompts
             if (input.Contains("tell me more") ||
                 input.Contains("another tip"))
             {
                 if (responses.ContainsKey(currentTopic))
                 {
+                    //fetch a random response 
                     return RandomResponseService.GetRandomResponse(
                         responses[currentTopic]
                     );
