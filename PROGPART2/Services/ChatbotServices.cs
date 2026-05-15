@@ -1,0 +1,75 @@
+﻿namespace CybersecurityChatbotGUI.Services
+                    "Never reuse passwords across accounts.",
+                    "Use a password manager for better security."
+                }
+            },
+
+            {
+    "phishing",
+                new List<string>
+                {
+                    "Avoid suspicious links in emails.",
+                    "Verify sender addresses carefully.",
+                    "Phishing scams often create urgency."
+                }
+            },
+
+            {
+    "privacy",
+                new List<string>
+                {
+                    "Review your privacy settings regularly.",
+                    "Avoid sharing too much online.",
+                    "Protect personal information carefully."
+                }
+            }
+        };
+
+public string GetResponse(string input)
+{
+    input = input.ToLower();
+
+    string sentiment = sentimentService.DetectSentiment(input);
+
+    if (sentiment == "worried")
+    {
+        return "It is understandable to feel worried about online threats. Here is a tip: Never share personal information through suspicious emails.";
+    }
+
+    if (input.Contains("i like privacy"))
+    {
+        memoryService.FavouriteTopic = "privacy";
+        return "Great! I will remember that you are interested in privacy.";
+    }
+
+    if (input.Contains("tell me more") || input.Contains("another tip"))
+    {
+        if (responses.ContainsKey(currentTopic))
+        {
+            return RandomResponseService.GetRandomResponse(
+                responses[currentTopic]
+            );
+        }
+    }
+
+    foreach (var keyword in responses.Keys)
+    {
+        if (input.Contains(keyword))
+        {
+            currentTopic = keyword;
+
+            return RandomResponseService.GetRandomResponse(
+                responses[keyword]
+            );
+        }
+    }
+
+    if (memoryService.FavouriteTopic == "privacy")
+    {
+        return "As someone interested in privacy, remember to check your account permissions regularly.";
+    }
+
+    return "I didn't quite understand that. Could you rephrase?";
+}
+    }
+}
