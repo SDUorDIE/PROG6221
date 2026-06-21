@@ -11,7 +11,7 @@ namespace CybersecurityChatbotGUI.Services
         private MemoryService memoryService = new MemoryService();
         private SentimentService sentimentService = new SentimentService();
 
-        //maps keyword
+        //maps keyword to responses
         private Dictionary<string, List<string>> responses =
             new Dictionary<string, List<string>>()
         {
