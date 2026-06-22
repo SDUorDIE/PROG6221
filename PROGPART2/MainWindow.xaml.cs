@@ -9,6 +9,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CybersecurityChatbotGUI.Services;
+using CybersecurityChatbotGUI.Models;
 
 namespace CybersecurityChatbotGUI
 {
@@ -23,7 +24,7 @@ namespace CybersecurityChatbotGUI
 
             chatbot = new ChatbotService();
 
-            AddMessage("Bot", "Welcome to the Cybersecurity Awarnes Bot");
+            AddMessage("Bot", "Welcome to the Cybersecurity Awareness Bot");
         }
 
         private void SendButton_Click(object sender, RoutedEventArgs e)
