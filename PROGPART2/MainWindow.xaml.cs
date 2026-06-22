@@ -54,5 +54,27 @@ namespace CybersecurityChatbotGUI
             ChatListBox.Items.Add($"{sender}: {message}");
             ChatListBox.ScrollIntoView(ChatListBox.Items[ChatListBox.Items.Count - 1]);
         }
+
+        private void AddTask_Click(object sender, RoutedEventArgs e)
+        {
+            TaskItem task = new TaskItem()
+            {
+                Id = TaskGrid.Items.Count + 1,
+                Title = TaskTitleTextBox.Text,
+                Description = TaskDescriptionTextBox.Text,
+                ReminderDate = TaskDatePicker.SelectedDate ?? DateTime.Now,
+                IsCompleted = false
+            };
+
+            taskService.AddTask(task);
+
+            TaskGrid.ItemsSource = null;
+            TaskGrid.ItemsSource = taskService.GetTasks();
+
+            logService.AddLog($"Task Added: {task.Title}");
+
+            ActivityLogListBox.ItemsSource = null;
+            ActivityLogListBox.ItemsSource = logService.GetLogs();
+        }
     }
 }
