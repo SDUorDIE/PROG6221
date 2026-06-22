@@ -73,6 +73,7 @@ namespace CybersecurityChatbotGUI
                 Title = TaskTitleTextBox.Text,
                 Description = TaskDescriptionTextBox.Text,
                 ReminderDate = TaskDatePicker.SelectedDate ?? DateTime.Now,
+                CreatedDate = DateTime.Now,
                 IsCompleted = false
             };
 
@@ -148,6 +149,42 @@ namespace CybersecurityChatbotGUI
 
             //Loads next question
             LoadQuestion();
+        }
+
+            private void CompleteTask_Click(object sender, RoutedEventArgs e)
+        {
+            if (TaskGrid.SelectedItem is TaskItem task)
+            {
+                taskService.CompleteTask(task.Id);
+
+                TaskGrid.ItemsSource = null;
+                TaskGrid.ItemsSource = taskService.GetTasks();
+
+                logService.AddLog($"Task Completed: {task.Title}");
+
+                RefreshLog();
+            }
+        }
+
+        private void DeleteTask_Click(object sender, RoutedEventArgs e)
+        {
+            if (TaskGrid.SelectedItem is TaskItem task)
+            {
+                taskService.DeleteTask(task.Id);
+
+                TaskGrid.ItemsSource = null;
+                TaskGrid.ItemsSource = taskService.GetTasks();
+
+                logService.AddLog($"Task Deleted: {task.Title}");
+
+                RefreshLog();
+            }
+        }
+
+        private void RefreshLog()
+        {
+            ActivityLogListBox.ItemsSource = null;
+            ActivityLogListBox.ItemsSource = logService.GetLogs();
         }
     }
 }
