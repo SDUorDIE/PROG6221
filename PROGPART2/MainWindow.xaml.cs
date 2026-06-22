@@ -76,5 +76,48 @@ namespace CybersecurityChatbotGUI
             ActivityLogListBox.ItemsSource = null;
             ActivityLogListBox.ItemsSource = logService.GetLogs();
         }
+
+        private void LoadQuestion()
+        {
+            if (quizService.CurrentQuestion >=
+                quizService.Questions.Count)
+            {
+                QuestionText.Text =
+                    $"Quiz Finished! Score: {quizService.Score}/{quizService.Questions.Count}";
+
+                QuizOptions.ItemsSource = null;
+
+                return;
+            }
+
+            var question =
+                quizService.Questions[quizService.CurrentQuestion];
+
+            QuestionText.Text = question.Question;
+
+            QuizOptions.ItemsSource = question.Options;
+        }
+
+        private void SubmitAnswer_Click(object sender, RoutedEventArgs e)
+        {
+            if (QuizOptions.SelectedItem == null)
+                return;
+
+            string answer =
+                QuizOptions.SelectedItem.ToString();
+
+            bool correct =
+                quizService.CheckAnswer(answer);
+
+            QuizFeedback.Text =
+                correct ? "Correct!" : "Incorrect!";
+
+            LoadQuestion();
+
+            logService.AddLog("Quiz Question Answered");
+
+            ActivityLogListBox.ItemsSource = null;
+            ActivityLogListBox.ItemsSource = logService.GetLogs();
+        }
     }
 }
