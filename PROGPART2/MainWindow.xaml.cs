@@ -1,62 +1,72 @@
-﻿using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows;
 using CybersecurityChatbotGUI.Services;
 using CybersecurityChatbotGUI.Models;
 
 namespace CybersecurityChatbotGUI
 {
-   
     public partial class MainWindow : Window
     {
+        //Main chatbot service
         private ChatbotService chatbot = new ChatbotService();
 
+        //Handles task management
         private TaskService taskService = new TaskService();
 
+        //Handles quiz functionality
         private QuizService quizService = new QuizService();
 
+        //Records user activities
         private ActivityLogService logService = new ActivityLogService();
 
-
+        //Constructor
         public MainWindow()
         {
             InitializeComponent();
 
-            chatbot = new ChatbotService();
+            //Display welcome message
+            AddMessage("Bot", "Welcome to the Cybersecurity Awareness Bot!");
 
-            AddMessage("Bot", "Welcome to the Cybersecurity Awareness Bot");
-
+            //Load first quiz question
             LoadQuestion();
         }
 
+        //Handles sending chatbot messages
         private void SendButton_Click(object sender, RoutedEventArgs e)
         {
             string input = MessageTextBox.Text;
 
-            ChatListBox.Items.Add("You: " + input);
+            //Prevent empty messages
+            if (string.IsNullOrWhiteSpace(input))
+                return;
 
+            //Display user message
+            AddMessage("You", input);
+
+            //Generate chatbot response
             string response = chatbot.GetResponse(input);
 
-            ChatListBox.Items.Add("Bot: " + response);
+            //Display bot response
+            AddMessage("Bot", response);
 
+            //Clear textbox after sending
             MessageTextBox.Clear();
         }
 
+        //Adds messages to chat window
         private void AddMessage(string sender, string message)
         {
             ChatListBox.Items.Add($"{sender}: {message}");
-            ChatListBox.ScrollIntoView(ChatListBox.Items[ChatListBox.Items.Count - 1]);
+
+            //Auto-scroll to newest message
+            ChatListBox.ScrollIntoView(
+                ChatListBox.Items[ChatListBox.Items.Count - 1]
+            );
         }
 
+        //Handles adding new cybersecurity tasks
         private void AddTask_Click(object sender, RoutedEventArgs e)
         {
+            //Creates new task object
             TaskItem task = new TaskItem()
             {
                 Id = TaskGrid.Items.Count + 1,
@@ -66,21 +76,30 @@ namespace CybersecurityChatbotGUI
                 IsCompleted = false
             };
 
+            //Saves task
             taskService.AddTask(task);
 
+            //Refresh task grid
             TaskGrid.ItemsSource = null;
             TaskGrid.ItemsSource = taskService.GetTasks();
 
+            //Log activity
             logService.AddLog($"Task Added: {task.Title}");
 
+            //Refresh activity log display
             ActivityLogListBox.ItemsSource = null;
             ActivityLogListBox.ItemsSource = logService.GetLogs();
+
+            //Clear input fields
+            TaskTitleTextBox.Clear();
+            TaskDescriptionTextBox.Clear();
         }
 
+        //Loads current quiz question
         private void LoadQuestion()
         {
-            if (quizService.CurrentQuestion >=
-                quizService.Questions.Count)
+            //Checks if quiz is complete
+            if (quizService.CurrentQuestion >= quizService.Questions.Count)
             {
                 QuestionText.Text =
                     $"Quiz Finished! Score: {quizService.Score}/{quizService.Questions.Count}";
@@ -90,34 +109,45 @@ namespace CybersecurityChatbotGUI
                 return;
             }
 
+            //Gets current question
             var question =
                 quizService.Questions[quizService.CurrentQuestion];
 
+            //Displays question text
             QuestionText.Text = question.Question;
 
+            //Displays answer choices
             QuizOptions.ItemsSource = question.Options;
         }
 
+        //Handles quiz answer submission
         private void SubmitAnswer_Click(object sender, RoutedEventArgs e)
         {
+            //Ensures an answer is selected
             if (QuizOptions.SelectedItem == null)
                 return;
 
+            //Get selected answer
             string answer =
                 QuizOptions.SelectedItem.ToString();
 
+            //Checks if answer is correct
             bool correct =
                 quizService.CheckAnswer(answer);
 
+            //Displays feedback
             QuizFeedback.Text =
                 correct ? "Correct!" : "Incorrect!";
 
-            LoadQuestion();
-
+            //Logs activity
             logService.AddLog("Quiz Question Answered");
 
+            //Refresh activity log
             ActivityLogListBox.ItemsSource = null;
             ActivityLogListBox.ItemsSource = logService.GetLogs();
+
+            //Loads next question
+            LoadQuestion();
         }
     }
 }
