@@ -16,7 +16,14 @@ namespace CybersecurityChatbotGUI
    
     public partial class MainWindow : Window
     {
-        private ChatbotService chatbot;
+        private ChatbotService chatbot = new ChatbotService();
+
+        private TaskService taskService = new TaskService();
+
+        private QuizService quizService = new QuizService();
+
+        private ActivityLogService logService = new ActivityLogService();
+
 
         public MainWindow()
         {
@@ -25,20 +32,19 @@ namespace CybersecurityChatbotGUI
             chatbot = new ChatbotService();
 
             AddMessage("Bot", "Welcome to the Cybersecurity Awareness Bot");
+
+            LoadQuestion();
         }
 
         private void SendButton_Click(object sender, RoutedEventArgs e)
         {
             string input = MessageTextBox.Text;
 
-            if (string.IsNullOrWhiteSpace(input))
-                return;
-
-            AddMessage("You", input);
+            ChatListBox.Items.Add("You: " + input);
 
             string response = chatbot.GetResponse(input);
 
-            AddMessage("Bot", response);
+            ChatListBox.Items.Add("Bot: " + response);
 
             MessageTextBox.Clear();
         }

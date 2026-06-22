@@ -9,7 +9,7 @@
 
         <TabControl FontSize="14">
 
-            <!-- CHATBOT TAB 
+         
             <TabItem Header="Chatbot">
 
                 <Grid Margin="10">
@@ -29,12 +29,10 @@
                                  Width="800"
                                  Height="35"
                                  Margin="0,10,10,0"/>
-
                         <Button x:Name="SendButton"
                                 Content="Send"
                                 Width="100"
                                 Height="35"
-                                Margin="0,10,0,0"
                                 Click="SendButton_Click"/>
                     </StackPanel>
 
@@ -42,7 +40,7 @@
 
             </TabItem>
 
-            <!-- TASKS TAB -->
+            
             <TabItem Header="Tasks">
 
                 <Grid Margin="10">
@@ -82,7 +80,7 @@
 
             </TabItem>
 
-            <!-- QUIZ TAB -->
+            
             <TabItem Header="Quiz">
 
                 <StackPanel Margin="20">
@@ -107,7 +105,7 @@
 
             </TabItem>
 
-            <!-- ACTIVITY LOG TAB -->
+            
             <TabItem Header="Activity Log">
 
                 <Grid Margin="10">
