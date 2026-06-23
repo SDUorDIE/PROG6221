@@ -9,9 +9,6 @@ namespace CybersecurityChatbotGUI
         //Main chatbot service
         private ChatbotService chatbot = new ChatbotService();
 
-        //Handles task management
-        private TaskService taskService = new TaskService();
-
         //Handles quiz functionality
         private QuizService quizService = new QuizService();
 
@@ -21,6 +18,8 @@ namespace CybersecurityChatbotGUI
         //Handles MongoDB operations
         private MongoDbService mongoDbService =
             new MongoDbService();
+
+        private NLPService nlpService = new NLPService();
 
         //Constructor
         public MainWindow()
@@ -41,22 +40,56 @@ namespace CybersecurityChatbotGUI
         private void SendButton_Click(object sender, RoutedEventArgs e)
         {
             string input = MessageTextBox.Text;
+            string intent = nlpService.DetectIntent(input);
 
-            //Prevent empty messages
+            switch (intent)
+
+            {
+
+                case "VIEW_TASKS":
+
+                    AddMessage("Bot",
+
+                        $"You currently have {mongoDbService.GetTasks().Count} task(s).");
+
+                    MessageTextBox.Clear();
+
+                    return;
+
+                case "START_QUIZ":
+
+                    AddMessage("Bot",
+
+                        "Open the Quiz tab to start the quiz.");
+
+                    MessageTextBox.Clear();
+
+                    return;
+
+                case "SHOW_LOG":
+
+                    AddMessage("Bot",
+
+                        "Open the Activity Log tab to view recent activities.");
+
+                    MessageTextBox.Clear();
+
+                    return;
+
+            }
+
             if (string.IsNullOrWhiteSpace(input))
+
                 return;
 
-            //Display user message
             AddMessage("You", input);
 
-            //Generate chatbot response
             string response = chatbot.GetResponse(input);
 
-            //Display bot response
             AddMessage("Bot", response);
 
-            //Clear textbox after sending
             MessageTextBox.Clear();
+
         }
 
         //Adds messages to chat window
@@ -84,15 +117,9 @@ namespace CybersecurityChatbotGUI
                 IsCompleted = false
             };
 
-            //Saves task
-            taskService.AddTask(task);
-
             //Saves task to MongoDB
             mongoDbService.AddTask(task);
-
-            //Refresh task grid
-            TaskGrid.ItemsSource = null;
-            TaskGrid.ItemsSource = taskService.GetTasks();
+            LoadTasks();
 
             //Log activity
             logService.AddLog($"Task Added: {task.Title}");
@@ -112,8 +139,12 @@ namespace CybersecurityChatbotGUI
             //Checks if quiz is complete
             if (quizService.CurrentQuestion >= quizService.Questions.Count)
             {
+                double percentage =
+                     (double)quizService.Score /
+                     quizService.Questions.Count * 100;
+
                 QuestionText.Text =
-                    $"Quiz Finished! Score: {quizService.Score}/{quizService.Questions.Count}";
+                    $"Quiz Complete! Score: {quizService.Score}/{quizService.Questions.Count} ({percentage:F0}%)";
 
                 QuizOptions.ItemsSource = null;
 
@@ -153,6 +184,15 @@ namespace CybersecurityChatbotGUI
             //Logs activity
             logService.AddLog("Quiz Question Answered");
 
+            if (correct)
+            {
+                logService.AddLog("Correct Answer");
+            }
+            else
+            {
+                logService.AddLog("Incorrect Answer");
+            }
+
             //Refresh activity log
             ActivityLogListBox.ItemsSource = null;
             ActivityLogListBox.ItemsSource = logService.GetLogs();
@@ -168,10 +208,6 @@ namespace CybersecurityChatbotGUI
                 mongoDbService.CompleteTask(task.Id);
                 LoadTasks();
 
-
-                TaskGrid.ItemsSource = null;
-                TaskGrid.ItemsSource = taskService.GetTasks();
-
                 logService.AddLog($"Task Completed: {task.Title}");
 
                 RefreshLog();
@@ -184,9 +220,6 @@ namespace CybersecurityChatbotGUI
             {
                 mongoDbService.DeleteTask(task.Id);
                 LoadTasks();
-
-                TaskGrid.ItemsSource = null;
-                TaskGrid.ItemsSource = taskService.GetTasks();
 
                 logService.AddLog($"Task Deleted: {task.Title}");
 
