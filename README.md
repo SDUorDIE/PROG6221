@@ -1,8 +1,5 @@
 how app works:
-https://youtu.be/JqMARwKX-eg
-
-app technical breakdown:
-https://youtu.be/lDnocvL4WRM
+https://youtu.be/VvEPkK6tysw 
 
 wav file:
 [VoiceGreeting.wav](https://github.com/user-attachments/files/27813537/VoiceGreeting.wav)
