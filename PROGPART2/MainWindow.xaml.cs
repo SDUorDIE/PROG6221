@@ -18,6 +18,10 @@ namespace CybersecurityChatbotGUI
         //Records user activities
         private ActivityLogService logService = new ActivityLogService();
 
+        //Handles MongoDB operations
+        private MongoDbService mongoDbService =
+            new MongoDbService();
+
         //Constructor
         public MainWindow()
         {
@@ -28,6 +32,9 @@ namespace CybersecurityChatbotGUI
 
             //Load first quiz question
             LoadQuestion();
+
+            //Load tasks from MongoDB
+            LoadTasks();
         }
 
         //Handles sending chatbot messages
@@ -79,6 +86,9 @@ namespace CybersecurityChatbotGUI
 
             //Saves task
             taskService.AddTask(task);
+
+            //Saves task to MongoDB
+            mongoDbService.AddTask(task);
 
             //Refresh task grid
             TaskGrid.ItemsSource = null;
@@ -150,12 +160,14 @@ namespace CybersecurityChatbotGUI
             //Loads next question
             LoadQuestion();
         }
-
+             //Handles task completion
             private void CompleteTask_Click(object sender, RoutedEventArgs e)
         {
             if (TaskGrid.SelectedItem is TaskItem task)
             {
-                taskService.CompleteTask(task.Id);
+                mongoDbService.CompleteTask(task.Id);
+                LoadTasks();
+
 
                 TaskGrid.ItemsSource = null;
                 TaskGrid.ItemsSource = taskService.GetTasks();
@@ -170,7 +182,8 @@ namespace CybersecurityChatbotGUI
         {
             if (TaskGrid.SelectedItem is TaskItem task)
             {
-                taskService.DeleteTask(task.Id);
+                mongoDbService.DeleteTask(task.Id);
+                LoadTasks();
 
                 TaskGrid.ItemsSource = null;
                 TaskGrid.ItemsSource = taskService.GetTasks();
@@ -185,6 +198,14 @@ namespace CybersecurityChatbotGUI
         {
             ActivityLogListBox.ItemsSource = null;
             ActivityLogListBox.ItemsSource = logService.GetLogs();
+        }
+
+        private void LoadTasks()
+        {
+            TaskGrid.ItemsSource = null;
+
+            TaskGrid.ItemsSource =
+                mongoDbService.GetTasks();
         }
     }
 }
